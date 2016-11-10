@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 import pandas as pd
 import sys
 import matplotlib.pyplot as plt
@@ -12,27 +15,37 @@ def plot(data):
     plt.show()
 
 def get_data(path):
-    file=open(path,"r+")
+
+    file = open(path, "r+")
     wordcount={}
-    descarte = [',', '.', '?', '!', '-', ';']
+    descarte = [',', '.', '?', '!', '-', '—', ';']
     for word in file.read().split():
 
         for d in descarte:
             if d in word:
                 word = word.replace(d, "")
 
-        if word not in wordcount:
-            wordcount[word] = 1
-        else:
-            wordcount[word] += 1
+        if not (word == ""):
 
-    data = pd.DataFrame.from_dict(wordcount, orient='index')
-    data = data.sort_values(by=[0], ascending=False)
-    data =  data.reset_index()
+            if word not in wordcount:
+                wordcount[word] = 1
+            else:
+                wordcount[word] += 1
+
+    data = pd.DataFrame(list(wordcount.iteritems()),
+                 columns=['word', 'num_words'])
+    data = data.sort_values(by=['num_words'], ascending=False)
+
+    data = data.reset_index()
+
     data['ranking'] = data.index
-    print data
+
+    del data['index']
+
+    data.to_csv("./output.csv")
+
     return data
 
-
-data = get_data(sys.argv[1])
-plot(data)
+data = get_data('brascubas.txt')
+#data = get_data(sys.argv[1])
+#plot(data)
