@@ -4,6 +4,7 @@
 import pandas as pd
 import sys
 import matplotlib.pyplot as plt
+import numpy as np
 
 def plot(data):
     x = data['ranking']
@@ -13,6 +14,7 @@ def plot(data):
     plt.xlabel('Ranking')
     plt.ylabel('Frequencia')
     plt.show()
+
 
 def get_data(path):
 
@@ -41,6 +43,11 @@ def get_data(path):
     data['ranking'] = data.index
 
     del data['index']
+
+    log = lambda x: 0 if x == 0 else np.log(x)
+
+    data['ranking_log'] = data['ranking'].apply(log)
+    data['num_words_log'] = data['num_words'].apply(log)
 
     data.to_csv("./output.csv")
 
